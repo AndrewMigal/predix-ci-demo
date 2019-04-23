@@ -18,12 +18,20 @@ profiles:
     input: 
       - scm_artifact.tar
     script: ./scripts/unit_test.sh
+    profile_config:
+      advance_on:                
+        - branch: "*"
+          advance_on: "always"
   build:
     input: 
       - scm_artifact.tar
     script: ./scripts/build.sh
     output: 
       - build_artifact.tar
+    profile_config:
+      advance_on:                
+        - branch: "*"
+          advance_on: "always"  
   deploy:
     input: 
       - build_artifact.tar
