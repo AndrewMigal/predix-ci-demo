@@ -1,45 +1,68 @@
 ---
 pipeline:
-  clone:
-    - unit_test: deploy
-    - build
+- docs_unit
+- dw_unit
+- site_unit
+- site_integration
+- site_integration_predix_ui
+
 edges:
-  - build: deploy
+- site_unit: docs_unit
+- site_unit: dw_unit
+- site_unit: site_integration
+- site_integration: site_integration_predix_ui
+
 profiles:
-  clone:
-    script: ./scripts/fetch.sh
-    output: 
-      - scm_artifact.tar
-    profile_config:
-      advance_on:                
-        - branch: "*"
-          advance_on: "always" 
-  unit_test:
+  site_unit:
     input: 
       - scm_artifact.tar
     script: ./scripts/unit_test.sh
-    profile_config:
-      advance_on:                
+   profile_config:
+     advance_on:                   # can also just be string value
+       - branch: "*"
+         advance_on: "always"
+
+ # Integration tests for services/site
+  site_integration:
+    input: 
+       - build_artifact.tar
+     script: ./scripts/deploy.sh
+      profile_config:
+      advance_on:                   # can also just be string value
         - branch: "*"
           advance_on: "always"
-  build:
+
+ # --------------------------
+ # Site Integration (Predix)
+ # --------------------------
+  site_integration_predix_ui:
     input: 
-      - scm_artifact.tar
-    script: ./scripts/build.sh
-    output: 
-      - build_artifact.tar
-    profile_config:
-      advance_on:                
-        - branch: "*"
-          advance_on: "always"  
-  deploy:
+       - build_artifact.tar
+     script: ./scripts/deploy.sh
+
+  dw_unit:
+     input: 
+       - build_artifact.tar
+     script: ./scripts/deploy.sh
+  
+ # --------------------------
+ # Worker unit tests
+ # --------------------------
+  worker_unit:
+     input: 
+       - build_artifact.tar
+     script: ./scripts/deploy.sh
+
+ # -------------------------------
+ # Build all services Docker Build
+ # -------------------------------
+  build_and_push_all:
     input: 
-      - build_artifact.tar
-    script: ./scripts/deploy.sh
-    environment:
-      DOCKER_IMAGE: predixci/canary
-      DOCKER_USERNAME: predixci
-      # DOCKER_PASSWORD: set in Predix CI UI
-      # SOLANO_API_KEY:  set in Predix CI UI
+       - build_artifact.tar
+     script: ./scripts/deploy.sh
+     environment:
+       DOCKER_IMAGE: predixci/canary
+       DOCKER_USERNAME: predixci
   default:
     script: dev/null
+
