@@ -1,16 +1,16 @@
 ---
 pipeline:
-- docs_unit
-- dw_unit
-- site_unit
-- site_integration
-- site_integration_predix_ui
+ - docs_unit
+ - dw_unit
+ - site_unit
+ - site_integration
+ - site_integration_predix_ui
 
 edges:
-- site_unit: docs_unit
-- site_unit: dw_unit
-- site_unit: site_integration
-- site_integration: site_integration_predix_ui
+ - site_unit: docs_unit
+ - site_unit: dw_unit
+ - site_unit: site_integration
+ - site_integration: site_integration_predix_ui
 
 profiles:
   site_unit:
