@@ -48,21 +48,11 @@ profiles:
  # --------------------------
  # Worker unit tests
  # --------------------------
-  worker_unit:
+  docs_unit:
      input: 
        - build_artifact.tar
      script: ./scripts/deploy.sh
 
- # -------------------------------
- # Build all services Docker Build
- # -------------------------------
-  build_and_push_all:
-    input: 
-       - build_artifact.tar
-     script: ./scripts/deploy.sh
-     environment:
-       DOCKER_IMAGE: predixci/canary
-       DOCKER_USERNAME: predixci
   default:
     script: dev/null
 
