@@ -26,11 +26,11 @@ profiles:
   site_integration:
     input: 
        - build_artifact.tar
-     script: ./scripts/deploy.sh
-     profile_config:
-       advance_on:                   # can also just be string value
-         - branch: "*"
-           advance_on: "always"
+    script: ./scripts/deploy.sh
+    profile_config:
+      advance_on:                   # can also just be string value
+        - branch: "*"
+          advance_on: "always"
 
  # --------------------------
  # Site Integration (Predix)
@@ -38,7 +38,7 @@ profiles:
   site_integration_predix_ui:
     input: 
        - build_artifact.tar
-     script: ./scripts/deploy.sh
+    script: ./scripts/deploy.sh
 
   dw_unit:
      input: 
@@ -55,4 +55,3 @@ profiles:
 
   default:
     script: dev/null
-
