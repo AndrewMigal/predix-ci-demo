@@ -1,57 +1,45 @@
 ---
 pipeline:
- - docs_unit
- - dw_unit
- - site_unit
- - site_integration
- - site_integration_predix_ui
-
+  clone:
+    - unit_test: deploy
+    - build
 edges:
- - site_unit: docs_unit
- - site_unit: dw_unit
- - site_unit: site_integration
- - site_integration: site_integration_predix_ui
-
+  - build: deploy
 profiles:
-  site_unit:
+  clone:
+    script: ./scripts/fetch.sh
+    output: 
+      - scm_artifact.tar
+    profile_config:
+      advance_on:                
+        - branch: "*"
+          advance_on: "always" 
+  unit_test:
     input: 
       - scm_artifact.tar
     script: ./scripts/unit_test.sh
     profile_config:
-      advance_on:                   # can also just be string value
+      advance_on:                
         - branch: "*"
           advance_on: "always"
-
- # Integration tests for services/site
-  site_integration:
+  build:
     input: 
-       - build_artifact.tar
-    script: ./scripts/deploy.sh
+      - scm_artifact.tar
+    script: ./scripts/build.sh
+    output: 
+      - build_artifact.tar
     profile_config:
-      advance_on:                   # can also just be string value
+      advance_on:                
         - branch: "*"
-          advance_on: "always"
-
- # --------------------------
- # Site Integration (Predix)
- # --------------------------
-  site_integration_predix_ui:
+          advance_on: "always"  
+  deploy:
     input: 
-       - build_artifact.tar
+      - build_artifact.tar
     script: ./scripts/deploy.sh
-
-  dw_unit:
-     input: 
-       - build_artifact.tar
-     script: ./scripts/deploy.sh
-  
- # --------------------------
- # Worker unit tests
- # --------------------------
-  docs_unit:
-     input: 
-       - build_artifact.tar
-     script: ./scripts/deploy.sh
-
+    environment:
+      DOCKER_IMAGE: predixci/canary
+      DOCKER_USERNAME: predixci
+      # DOCKER_PASSWORD: set in Predix CI UI
+      # SOLANO_API_KEY:  set in Predix CI UI
   default:
     script: dev/null
